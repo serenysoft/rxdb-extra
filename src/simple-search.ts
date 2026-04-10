@@ -1,27 +1,27 @@
 import type { MangoQuery, RxCollection, RxDocument, RxPlugin, RxQuery } from 'rxdb';
 
-export type RxSearchSerializer = (data: Record<string, any>, fields: string[]) => string;
-export type RxSearchTransform = (
+export type RxSimpleSearchSerializer = (data: Record<string, any>, fields: string[]) => string;
+export type RxSimpleSearchTransform = (
   value: unknown,
   field: string,
   data: Record<string, any>,
 ) => unknown;
 
-export interface RxSearchableOption {
+export interface RxSimpleSearchableOptions {
   fields: string[];
   index?: string;
-  serializer?: RxSearchSerializer;
-  transform?: RxSearchTransform;
+  serializer?: RxSimpleSearchSerializer;
+  transform?: RxSimpleSearchTransform;
 }
 
-export interface RxSearchCollectionOptions {
-  searchable: RxSearchableOption;
+export interface RxSimpleSearchCollectionOptions {
+  searchable: RxSimpleSearchableOptions;
 }
 
 interface ResolvedCollectionSearchOptions {
   fields: string[];
   index: string;
-  serializer: RxSearchSerializer;
+  serializer: RxSimpleSearchSerializer;
 }
 
 function normalizeValue(value: unknown): string[] {
@@ -49,7 +49,7 @@ function normalizeValue(value: unknown): string[] {
 export function defaultSearchSerializer(
   data: Record<string, any>,
   fields: string[],
-  transform?: RxSearchTransform,
+  transform?: RxSimpleSearchTransform,
 ): string {
   return fields
     .flatMap((field) =>
@@ -64,7 +64,7 @@ export function defaultSearchSerializer(
 }
 
 function resolveSearchOptions(collection: RxCollection): ResolvedCollectionSearchOptions {
-  const options = (collection.options ?? {}) as RxSearchCollectionOptions;
+  const options = (collection.options ?? {}) as RxSimpleSearchCollectionOptions;
   const { searchable } = options;
 
   if (!searchable?.fields?.length) {
@@ -142,7 +142,7 @@ export function search<RxDocumentType, OrmMethods = {}, Reactivity = unknown>(
   return this.find(createSearchQuery(this, text, query));
 }
 
-export function initialize(collection: RxCollection): void {
+export function initializeSimpleSearch(collection: RxCollection): void {
   const options = resolveSearchOptions(collection);
 
   collection.preInsert((data: Record<string, any>) => {
@@ -165,7 +165,7 @@ export const RxDBSimpleSearchPlugin: RxPlugin = {
   hooks: {
     createRxCollection: {
       after: ({ collection }: { collection: RxCollection }) => {
-        initialize(collection);
+        initializeSimpleSearch(collection);
       },
     },
   },

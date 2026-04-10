@@ -1,15 +1,13 @@
 import { afterEach, beforeAll, describe, expect, it } from '@jest/globals';
 import { addRxPlugin } from 'rxdb';
-import { RxDBDevModePlugin } from 'rxdb/plugins/dev-mode';
 import { defaultSearchSerializer, RxDBSimpleSearchPlugin } from '../src';
 import { initDatabase, userSchema } from './database';
 
-describe('Search hooks', () => {
+describe('Search plugin', () => {
   let database: any;
 
   beforeAll(() => {
     addRxPlugin(RxDBSimpleSearchPlugin);
-    addRxPlugin(RxDBDevModePlugin);
   });
 
   afterEach(async () => {
