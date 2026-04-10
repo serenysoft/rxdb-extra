@@ -1,33 +1,18 @@
 import type { RxCollection, RxDatabase, RxPlugin } from 'rxdb';
+import type {
+  ResolvedTimestampFields,
+  RxCollectionCreatorLike,
+  RxTransform,
+  RxTimestampsCollectionOptions,
+} from './types';
 
-export type RxTimestampTransform = (
-  value: unknown,
-  field: string,
-  data: Record<string, any>,
-) => unknown;
-
-export interface RxTimestampFields {
-  createdAt?: string;
-  updatedAt?: string;
-  transform?: RxTimestampTransform;
-}
-
-export type RxTimestampsOptions = boolean | RxTimestampFields;
-
-export interface RxTimestampsCollectionOptions {
-  timestamps?: RxTimestampsOptions;
-}
-
-interface ResolvedTimestampFields {
-  createdAt: string;
-  updatedAt: string;
-  transform?: RxTimestampTransform;
-}
-
-interface RxCollectionCreatorLike {
-  schema: Record<string, any>;
-  options?: RxTimestampsCollectionOptions & Record<string, any>;
-}
+export type {
+  RxCollectionCreatorLike,
+  RxTimestampFields,
+  RxTransform as RxTimestampTransform,
+  RxTimestampsCollectionOptions,
+  RxTimestampsOptions,
+} from './types';
 
 const DEFAULT_FIELDS: ResolvedTimestampFields = {
   createdAt: 'createdAt',
@@ -123,7 +108,7 @@ function formatValue(
   value: unknown,
   field: string,
   data: Record<string, any>,
-  transform?: RxTimestampTransform,
+  transform?: RxTransform,
 ): unknown {
   if (transform) {
     return transform(value, field, data);

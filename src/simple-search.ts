@@ -1,31 +1,16 @@
 import type { MangoQuery, RxCollection, RxDocument, RxPlugin, RxQuery } from 'rxdb';
+import type {
+  ResolvedCollectionSearchOptions,
+  RxSimpleSearchCollectionOptions,
+  RxTransform,
+} from './types';
 
-export type RxSimpleSearchSerializer = (
-  data: Record<string, any>,
-  fields: string[],
-) => string | Promise<string>;
-export type RxSimpleSearchTransform = (
-  value: unknown,
-  field: string,
-  data: Record<string, any>,
-) => unknown;
-
-export interface RxSimpleSearchableOptions {
-  fields: string[];
-  index?: string;
-  serializer?: RxSimpleSearchSerializer;
-  transform?: RxSimpleSearchTransform;
-}
-
-export interface RxSimpleSearchCollectionOptions {
-  searchable: RxSimpleSearchableOptions;
-}
-
-interface ResolvedCollectionSearchOptions {
-  fields: string[];
-  index: string;
-  serializer: RxSimpleSearchSerializer;
-}
+export type {
+  RxSimpleSearchableOptions,
+  RxSimpleSearchCollectionOptions,
+  RxSimpleSearchSerializer,
+  RxTransform as RxSimpleSearchTransform,
+} from './types';
 
 function getPathSegments(field: string): string[] {
   return String(field)
@@ -217,7 +202,7 @@ function normalizeValue(value: unknown): string[] {
 export function defaultSearchSerializer(
   data: Record<string, any>,
   fields: string[],
-  transform?: RxSimpleSearchTransform,
+  transform?: RxTransform,
 ): string {
   return fields
     .flatMap((field) =>
