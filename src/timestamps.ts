@@ -1,33 +1,31 @@
 import type { RxCollection, RxDatabase, RxPlugin } from 'rxdb';
-import type {
-  ResolvedTimestampFields,
-  RxCollectionCreatorLike,
-  RxTransform,
-  RxTimestampsCollectionOptions,
-} from './types';
+import type { RxTimestampsCollectionOptions, RxTimestampOptions, RxTransform } from './types';
 
-export type {
-  RxCollectionCreatorLike,
-  RxTimestampFields,
-  RxTransform as RxTimestampTransform,
-  RxTimestampsCollectionOptions,
-  RxTimestampsOptions,
-} from './types';
-
-const DEFAULT_FIELDS: ResolvedTimestampFields = {
+const DEFAULT_FIELDS: {
+  createdAt: string;
+  updatedAt: string;
+} = {
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
 };
 
 function resolveTimestampFields(source: {
   database?: Pick<RxDatabase, 'options'>;
-  options?: RxTimestampsCollectionOptions;
-}): ResolvedTimestampFields | null {
+  options?: {
+    timestamps?: boolean | RxTimestampOptions;
+  };
+}): {
+  createdAt: string;
+  updatedAt: string;
+  transform?: RxTransform;
+} | null {
   const mergedOptions = {
     ...((source.database?.options ?? {}) as Record<string, unknown>),
     ...((source.options ?? {}) as Record<string, unknown>),
   };
-  const { timestamps } = mergedOptions as RxTimestampsCollectionOptions;
+  const { timestamps } = mergedOptions as {
+    timestamps?: boolean | RxTimestampOptions;
+  };
 
   if (!timestamps) {
     return null;
@@ -72,9 +70,9 @@ function getPrimaryPath(primaryKey: unknown): string | undefined {
 
 export function validateTimestampSchema(
   database: Pick<RxDatabase, 'options'>,
-  creator: RxCollectionCreatorLike,
+  creator: RxTimestampsCollectionOptions,
   collectionName?: string,
-): RxCollectionCreatorLike {
+): RxTimestampsCollectionOptions {
   const fields = resolveTimestampFields({
     database,
     options: creator.options,
@@ -120,7 +118,9 @@ function formatValue(
 export function initializeTimestamps(collection: RxCollection): void {
   const fields = resolveTimestampFields({
     database: collection.database,
-    options: (collection.options ?? {}) as RxTimestampsCollectionOptions,
+    options: (collection.options ?? {}) as {
+      timestamps?: boolean | RxTimestampOptions;
+    },
   });
 
   if (!fields) {
@@ -155,7 +155,7 @@ export const RxDBTimestampsPlugin: RxPlugin = {
   rxdb: true,
   hooks: {
     preCreateRxCollection: {
-      after: (args: RxCollectionCreatorLike & { name: string; database: RxDatabase }) => {
+      after: (args: RxTimestampsCollectionOptions & { name: string; database: RxDatabase }) => {
         validateTimestampSchema(args.database, args, args.name);
       },
     },

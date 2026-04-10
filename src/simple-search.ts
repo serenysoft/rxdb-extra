@@ -1,13 +1,8 @@
 import type { MangoQuery, RxCollection, RxDocument, RxPlugin, RxQuery } from 'rxdb';
-import type {
-  ResolvedCollectionSearchOptions,
-  RxSimpleSearchCollectionOptions,
-  RxTransform,
-} from './types';
+import type { RxSimpleSearchableOptions, RxTransform } from './types';
 
 export type {
   RxSimpleSearchableOptions,
-  RxSimpleSearchCollectionOptions,
   RxSimpleSearchSerializer,
   RxTransform as RxSimpleSearchTransform,
 } from './types';
@@ -219,9 +214,10 @@ export function defaultSearchSerializer(
 function resolveSearchOptions(
   collection: RxCollection,
   strict = true,
-): ResolvedCollectionSearchOptions | null {
-  const options = (collection.options ?? {}) as RxSimpleSearchCollectionOptions;
-  const { searchable } = options;
+): RxSimpleSearchableOptions | null {
+  const { searchable } = (collection.options ?? {}) as {
+    searchable?: RxSimpleSearchableOptions;
+  };
 
   if (!searchable && !strict) {
     return null;
@@ -251,7 +247,7 @@ function resolveSearchOptions(
 async function updateSearchField(
   collection: RxCollection,
   data: Record<string, any>,
-  options: ResolvedCollectionSearchOptions,
+  options: RxSimpleSearchableOptions,
   instance?: RxDocument,
 ): Promise<void> {
   const { index, fields, serializer } = options;
@@ -322,7 +318,7 @@ export function initializeSimpleSearch(collection: RxCollection): void {
 }
 
 export const RxDBSimpleSearchPlugin: RxPlugin = {
-  name: 'searchable-fields',
+  name: 'simple-search',
   rxdb: true,
   prototypes: {
     RxCollection: (proto: any) => {

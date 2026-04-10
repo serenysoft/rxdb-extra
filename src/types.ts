@@ -1,13 +1,13 @@
-export type RxSimpleSearchSerializer = (
-  data: Record<string, any>,
-  fields: string[],
-) => string | Promise<string>;
-
 export type RxTransform = (
   value: unknown,
   field: string,
   data: Record<string, any>,
 ) => unknown;
+
+export type RxSimpleSearchSerializer = (
+  data: Record<string, any>,
+  fields: string[],
+) => string | Promise<string>;
 
 export interface RxSimpleSearchableOptions {
   fields: string[];
@@ -16,35 +16,15 @@ export interface RxSimpleSearchableOptions {
   transform?: RxTransform;
 }
 
-export interface RxSimpleSearchCollectionOptions {
-  searchable: RxSimpleSearchableOptions;
-}
-
-export interface ResolvedCollectionSearchOptions {
-  fields: string[];
-  index: string;
-  serializer: RxSimpleSearchSerializer;
-}
-
-export interface RxTimestampFields {
+export interface RxTimestampOptions {
   createdAt?: string;
   updatedAt?: string;
   transform?: RxTransform;
 }
 
-export type RxTimestampsOptions = boolean | RxTimestampFields;
-
 export interface RxTimestampsCollectionOptions {
-  timestamps?: RxTimestampsOptions;
-}
-
-export interface ResolvedTimestampFields {
-  createdAt: string;
-  updatedAt: string;
-  transform?: RxTransform;
-}
-
-export interface RxCollectionCreatorLike {
   schema: Record<string, any>;
-  options?: RxTimestampsCollectionOptions & Record<string, any>;
+  options?: {
+    timestamps?: boolean | RxTimestampOptions;
+  } & Record<string, any>;
 }
