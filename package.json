@@ -67,7 +67,11 @@
   },
   "release-it": {
     "git": {
-      "commitMessage": "Release v${version}"
+      "commitMessage": "Release v${version}",
+      "requireCleanWorkingDir": false
+    },
+    "npm": {
+      "publish": false
     },
     "hooks": {
       "before:init": [
