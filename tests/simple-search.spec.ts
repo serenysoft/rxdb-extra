@@ -129,6 +129,62 @@ describe('Search plugin', () => {
     expect(inserted.toJSON().searchSummary).toBe('jeff bezos');
   });
 
+  it('should support field paths that read from referenced documents', async () => {
+    database = await initDatabase();
+
+    await database.addCollections({
+      departments: {
+        schema: {
+          version: 0,
+          primaryKey: 'id',
+          type: 'object',
+          properties: {
+            id: {
+              type: 'string',
+              maxLength: 100,
+            },
+            name: {
+              type: 'string',
+            },
+          },
+          required: ['id', 'name'],
+        },
+      },
+      users: {
+        schema: {
+          ...userSchema,
+          properties: {
+            ...userSchema.properties,
+            department: {
+              type: 'string',
+              ref: 'departments',
+            },
+          },
+        },
+        options: {
+          searchable: {
+            fields: ['name', 'department.name'],
+            index: 'searchIndex',
+          },
+        },
+      },
+    });
+
+    await database.departments.insert({
+      id: 'dep-1',
+      name: 'Engineering',
+    });
+
+    const inserted = await database.users.insert({
+      id: '1',
+      name: 'Grace Hopper',
+      age: 85,
+      department: 'dep-1',
+    });
+
+    expect(inserted.toJSON().searchIndex).toBe('grace hopper engineering');
+  });
+
   it('should support a transform to format date values', () => {
     const createdAt = new Date('2024-03-15T10:20:30.000Z');
 
