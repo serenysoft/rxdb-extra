@@ -38,10 +38,10 @@
     "test:watch": "cross-env NODE_ENV=test jest --watch"
   },
   "engines": {
-    "node": ">= 16"
+    "node": ">= 20"
   },
   "peerDependencies": {
-    "rxdb": "^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0"
+    "rxdb": "^15.0.0 || ^16.0.0 || ^17.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
