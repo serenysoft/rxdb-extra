@@ -1,4 +1,4 @@
-export type RxTransform = (
+export type RxModifier = (
   value: unknown,
   field: string,
   data: Record<string, any>,
@@ -13,13 +13,13 @@ export interface RxSimpleSearchableOptions {
   fields: string[];
   index?: string;
   serializer?: RxSimpleSearchSerializer;
-  transform?: RxTransform;
+  modifier?: RxModifier;
 }
 
 export interface RxTimestampOptions {
   createdAt?: string;
   updatedAt?: string;
-  transform?: RxTransform;
+  modifier?: RxModifier;
 }
 
 export interface RxTimestampsCollectionOptions {

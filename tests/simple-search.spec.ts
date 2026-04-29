@@ -185,7 +185,7 @@ describe('Search plugin', () => {
     expect(inserted.toJSON().searchIndex).toBe('grace hopper engineering');
   });
 
-  it('should support a transform to format date values', () => {
+  it('should support a modifier to format date values', () => {
     const createdAt = new Date('2024-03-15T10:20:30.000Z');
 
     const searchIndex = defaultSearchSerializer(

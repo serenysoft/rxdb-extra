@@ -137,7 +137,7 @@ describe('Timestamps plugin', () => {
     expect(typeof inserted.toJSON().updated_on).toBe('string');
   });
 
-  it('should support a transform to format dates before save', async () => {
+  it('should support a modifier to format dates before save', async () => {
     database = await initDatabase();
 
     await database.addCollections({
@@ -145,7 +145,7 @@ describe('Timestamps plugin', () => {
         schema: formattedTimestampUserSchema,
         options: {
           timestamps: {
-            transform: (value: unknown) =>
+            modifier: (value: unknown) =>
               value instanceof Date ? value.toISOString().slice(0, 10) : value,
           },
         },

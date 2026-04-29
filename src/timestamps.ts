@@ -1,5 +1,5 @@
 import type { RxCollection, RxDatabase, RxPlugin } from 'rxdb';
-import type { RxTimestampsCollectionOptions, RxTimestampOptions, RxTransform } from './types';
+import type { RxTimestampsCollectionOptions, RxTimestampOptions, RxModifier } from './types';
 
 const DEFAULT_FIELDS: {
   createdAt: string;
@@ -17,7 +17,7 @@ function resolveTimestampFields(source: {
 }): {
   createdAt: string;
   updatedAt: string;
-  transform?: RxTransform;
+  modifier?: RxModifier;
 } | null {
   const mergedOptions = {
     ...((source.database?.options ?? {}) as Record<string, unknown>),
@@ -106,10 +106,10 @@ function formatValue(
   value: unknown,
   field: string,
   data: Record<string, any>,
-  transform?: RxTransform,
+  modifier?: RxModifier,
 ): unknown {
-  if (transform) {
-    return transform(value, field, data);
+  if (modifier) {
+    return modifier(value, field, data);
   }
 
   return value instanceof Date ? value.toISOString() : value;
@@ -131,11 +131,11 @@ export function initializeTimestamps(collection: RxCollection): void {
     const now = new Date();
 
     if (!data[fields.createdAt]) {
-      data[fields.createdAt] = formatValue(now, fields.createdAt, data, fields.transform);
+      data[fields.createdAt] = formatValue(now, fields.createdAt, data, fields.modifier);
     }
 
     if (!data[fields.updatedAt]) {
-      data[fields.updatedAt] = formatValue(now, fields.updatedAt, data, fields.transform);
+      data[fields.updatedAt] = formatValue(now, fields.updatedAt, data, fields.modifier);
     }
   }, false);
 
@@ -143,10 +143,10 @@ export function initializeTimestamps(collection: RxCollection): void {
     const now = new Date();
 
     if (!data[fields.createdAt]) {
-      data[fields.createdAt] = formatValue(now, fields.createdAt, data, fields.transform);
+      data[fields.createdAt] = formatValue(now, fields.createdAt, data, fields.modifier);
     }
 
-    data[fields.updatedAt] = formatValue(now, fields.updatedAt, data, fields.transform);
+    data[fields.updatedAt] = formatValue(now, fields.updatedAt, data, fields.modifier);
   }, false);
 }
 

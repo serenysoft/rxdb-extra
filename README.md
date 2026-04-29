@@ -55,9 +55,9 @@ console.log(doc.toJSON().searchIndex); // "bill gates 67"
 
 `searchable.fields` is required and defines which attributes are merged into the stored search string.
 
-## Transform values before indexing
+## Modify values before indexing
 
-If you want to keep the default serializer but normalize a specific field first, use `transform`.
+If you want to keep the default serializer but normalize a specific field first, use `modifier`.
 This is useful for formatting date values.
 
 ```ts
@@ -65,7 +65,7 @@ options: {
   searchable: {
     fields: ['name', 'createdAt'],
     index: 'searchIndex',
-    transform: (value, field) =>
+    modifier: (value, field) =>
       field === 'createdAt' ? String(value ?? '').slice(0, 10) : value,
   },
 }
@@ -136,12 +136,12 @@ options: {
 }
 ```
 
-To format generated timestamps before save, use `transform`:
+To format generated timestamps before save, use `modifier`:
 
 ```ts
 options: {
   timestamps: {
-    transform: (value, field) =>
+    modifier: (value, field) =>
       value instanceof Date ? value.toISOString().slice(0, 10) : value,
   },
 }
