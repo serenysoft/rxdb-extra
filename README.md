@@ -13,9 +13,10 @@ npm i rxdb-extra --save
 ```ts
 import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
-import { RxDBSimpleSearchPlugin } from 'rxdb-extra';
+import { RxDBSimpleSearchPlugin, RxDBStrictSchemaPlugin } from 'rxdb-extra';
 
 addRxPlugin(RxDBSimpleSearchPlugin);
+addRxPlugin(RxDBStrictSchemaPlugin);
 
 const database = await createRxDatabase({
   name: 'appdb',
@@ -85,6 +86,54 @@ options: {
 ```
 
 You can then query the stored field with regular RxDB selectors, for example using `$regex`.
+
+## Strict schema plugin
+
+The strict-schema plugin removes properties that are not declared in `schema.properties`.
+It runs on insert and save, so out-of-schema fields are stripped before documents are persisted.
+
+```ts
+import { addRxPlugin, createRxDatabase } from 'rxdb';
+import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
+import { RxDBStrictSchemaPlugin } from 'rxdb-extra';
+
+addRxPlugin(RxDBStrictSchemaPlugin);
+
+const database = await createRxDatabase({
+  name: 'appdb',
+  storage: getRxStorageMemory(),
+});
+
+await database.addCollections({
+  users: {
+    schema: {
+      version: 0,
+      primaryKey: 'id',
+      type: 'object',
+      properties: {
+        id: { type: 'string', maxLength: 100 },
+        name: { type: 'string' },
+        age: { type: 'integer' },
+      },
+      required: ['id', 'name'],
+    },
+  },
+});
+
+const doc = await database.users.insert({
+  id: '2',
+  name: 'Alan Turing',
+  age: 41,
+  extraField: 'will be removed',
+});
+
+console.log(doc.toJSON());
+// { id: '2', name: 'Alan Turing', age: 41 }
+```
+
+Notes:
+- Only top-level keys are filtered.
+- Fields declared in `schema.properties` are preserved.
 
 ## Timestamps plugin
 
