@@ -89,7 +89,7 @@ You can then query the stored field with regular RxDB selectors, for example usi
 ## Timestamps plugin
 
 The timestamps plugin automatically maintains `createdAt` and `updatedAt` fields for each document.
-It can be enabled per collection or at database level.
+It is enabled by default and can also be configured per collection or at database level.
 The timestamp fields must already be declared in `schema.properties`; the plugin does not mutate the schema.
 
 ```ts
@@ -123,6 +123,14 @@ await database.addCollections({
     },
   },
 });
+```
+
+To disable timestamps for a specific collection, set `timestamps: false`:
+
+```ts
+options: {
+  timestamps: false,
+}
 ```
 
 You can also customize the field names with:

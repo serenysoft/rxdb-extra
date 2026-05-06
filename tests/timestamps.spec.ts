@@ -63,16 +63,13 @@ describe('Timestamps plugin', () => {
     }
   });
 
-  it('should throw when timestamp fields are not declared in schema.properties', async () => {
+  it('should throw by default when timestamp fields are not declared in schema.properties', async () => {
     database = await initDatabase();
 
     await expect(
       database.addCollections({
         users: {
           schema: userSchema,
-          options: {
-            timestamps: true,
-          },
         },
       }),
     ).rejects.toThrow('schema.properties');
@@ -135,6 +132,28 @@ describe('Timestamps plugin', () => {
 
     expect(typeof inserted.toJSON().created_on).toBe('string');
     expect(typeof inserted.toJSON().updated_on).toBe('string');
+  });
+
+  it('should allow disabling timestamps per collection', async () => {
+    database = await initDatabase();
+
+    await database.addCollections({
+      users: {
+        schema: userSchema,
+        options: {
+          timestamps: false,
+        },
+      },
+    });
+
+    const inserted = await database.users.insert({
+      id: '5',
+      name: 'Katherine Johnson',
+      age: 101,
+    });
+
+    expect(inserted.toJSON().createdAt).toBeUndefined();
+    expect(inserted.toJSON().updatedAt).toBeUndefined();
   });
 
   it('should support a modifier to format dates before save', async () => {

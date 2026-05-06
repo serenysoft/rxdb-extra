@@ -27,11 +27,11 @@ function resolveTimestampFields(source: {
     timestamps?: boolean | RxTimestampOptions;
   };
 
-  if (!timestamps) {
+  if (timestamps === false) {
     return null;
   }
 
-  if (timestamps === true) {
+  if (timestamps === undefined || timestamps === true) {
     return { ...DEFAULT_FIELDS };
   }
 
