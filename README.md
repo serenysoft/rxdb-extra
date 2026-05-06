@@ -8,15 +8,14 @@ This package provides small utility plugins for RxDB, including searchable field
 npm i rxdb-extra --save
 ```
 
-## Usage
+## Simple search
 
 ```ts
 import { addRxPlugin, createRxDatabase } from 'rxdb';
 import { getRxStorageMemory } from 'rxdb/plugins/storage-memory';
-import { RxDBSimpleSearchPlugin, RxDBStrictSchemaPlugin } from 'rxdb-extra';
+import { RxDBSimpleSearchPlugin } from 'rxdb-extra';
 
 addRxPlugin(RxDBSimpleSearchPlugin);
-addRxPlugin(RxDBStrictSchemaPlugin);
 
 const database = await createRxDatabase({
   name: 'appdb',
@@ -56,7 +55,7 @@ console.log(doc.toJSON().searchIndex); // "bill gates 67"
 
 `searchable.fields` is required and defines which attributes are merged into the stored search string.
 
-## Modify values before indexing
+### Modify values before indexing
 
 If you want to keep the default serializer but normalize a specific field first, use `modifier`.
 This is useful for formatting date values.
@@ -72,7 +71,7 @@ options: {
 }
 ```
 
-## Custom serializer
+### Custom serializer
 
 ```ts
 options: {
@@ -87,7 +86,7 @@ options: {
 
 You can then query the stored field with regular RxDB selectors, for example using `$regex`.
 
-## Strict schema plugin
+## Strict schema
 
 The strict-schema plugin removes properties that are not declared in `schema.properties`.
 It runs on insert and save, so out-of-schema fields are stripped before documents are persisted.
@@ -135,7 +134,7 @@ Notes:
 - Only top-level keys are filtered.
 - Fields declared in `schema.properties` are preserved.
 
-## Timestamps plugin
+## Timestamps
 
 The timestamps plugin automatically maintains `createdAt` and `updatedAt` fields for each document.
 It is enabled by default and can also be configured per collection or at database level.
