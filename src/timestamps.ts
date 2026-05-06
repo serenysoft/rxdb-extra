@@ -102,6 +102,14 @@ export function validateTimestampSchema(
   return creator;
 }
 
+function isDateObject(value: unknown): value is Date {
+  return (
+    value instanceof Date ||
+    (Object.prototype.toString.call(value) === '[object Date]' &&
+      typeof (value as Date).toISOString === 'function')
+  );
+}
+
 function formatValue(
   value: unknown,
   field: string,
@@ -112,7 +120,7 @@ function formatValue(
     return modifier(value, field, data);
   }
 
-  return value instanceof Date ? value.toISOString() : value;
+  return isDateObject(value) ? value.toISOString() : value;
 }
 
 export function initializeTimestamps(collection: RxCollection): void {
